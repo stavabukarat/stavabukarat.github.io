@@ -1,0 +1,143 @@
+---
+import { site } from '../site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description = site.intro } = Astro.props;
+const pageTitle = title ? `${title} | ${site.name}` : `${site.name} | ${site.role}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a href="/" class="brand">{site.name}</a>
+        <nav>
+          <a href="/#work">Work</a>
+          <a href="/#about">About</a>
+          <a href={`mailto:${site.email}`}>Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <slot />
+    </main>
+
+    <footer class="wrap footer">
+      <span>© {new Date().getFullYear()} {site.name}</span>
+      <span class="footer-links">
+        <a href={site.github}>GitHub</a>
+        <a href={site.linkedin}>LinkedIn</a>
+        <a href={`mailto:${site.email}`}>Email</a>
+      </span>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #0b0b0d;
+    --surface: #131317;
+    --surface-2: #1a1a1f;
+    --border: #25252c;
+    --text: #ececef;
+    --muted: #9696a0;
+    --faint: #6a6a74;
+    --accent: #8fb8ff;
+    --radius: 14px;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 Inter, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  @media (max-width: 600px) { .wrap { padding: 0 16px; } }
+  .eyebrow {
+    font: 500 12px/1 var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .tag {
+    display: inline-block;
+    font: 400 12px/1 var(--mono);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 10px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .btn:hover { border-color: var(--muted); }
+  .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn.primary:hover { background: #fff; }
+</style>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(11, 11, 13, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner { display: flex; justify-content: space-between; align-items: center; height: 60px; }
+  .brand { font-weight: 600; text-decoration: none; letter-spacing: -0.01em; }
+  nav { display: flex; gap: 24px; }
+  nav a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  nav a:hover { color: var(--text); }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 120px;
+    padding-top: 24px;
+    padding-bottom: 40px;
+    border-top: 1px solid var(--border);
+    color: var(--faint);
+    font-size: 14px;
+  }
+  .footer-links { display: flex; gap: 20px; }
+  .footer a { text-decoration: none; }
+  .footer a:hover { color: var(--text); }
+</style>

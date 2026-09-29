@@ -1,0 +1,120 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { site } from '../site';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+// Filter chips: the main platforms first, in a fixed order, then nothing else, to keep the row short.
+const FILTERS = ['Wix Studio', 'Wix Headless', 'Base44', 'Claude Code', 'Velo'];
+const filters = FILTERS.filter((f) => projects.some((p) => p.data.tags.includes(f)));
+---
+
+<Base>
+  <section class="hero">
+    <p class="eyebrow">{site.role}</p>
+    <h1>Hi, I'm Stav.<br /><span>I build websites and platforms, with AI in the loop.</span></h1>
+    <p class="intro">{site.intro}</p>
+    <div class="actions">
+      <a class="btn primary" href="#work">View my work</a>
+      {site.resume && <a class="btn" href={site.resume}>Resume</a>}
+      <a class="btn" href={site.github}>GitHub</a>
+      <a class="btn" href={site.linkedin}>LinkedIn</a>
+    </div>
+  </section>
+
+  <section id="work" class="work">
+    <div class="section-head">
+      <h2>Selected work</h2>
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button class="chip active" data-filter="all">All</button>
+        {filters.map((f) => <button class="chip" data-filter={f}>{f}</button>)}
+      </div>
+    </div>
+    <div class="grid">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <h2>About</h2>
+    <div class="about-grid">
+      <div>
+        {site.about.map((line) => <p>{line}</p>)}
+        <p>
+          I like projects where the hard part is the content: turning hundreds of names, photos and records into
+          something people can actually navigate. I work fast with AI tools, and I still care about the details.
+        </p>
+        <p><a class="link" href={`mailto:${site.email}`}>{site.email}</a></p>
+      </div>
+      <div>
+        <p class="eyebrow">Tools & languages</p>
+        <div class="skills">{site.skills.map((s) => <span class="tag">{s}</span>)}</div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+  const cards = document.querySelectorAll<HTMLElement>('.card');
+  chips.forEach((chip) =>
+    chip.addEventListener('click', () => {
+      const f = chip.dataset.filter!;
+      chips.forEach((c) => c.classList.toggle('active', c === chip));
+      cards.forEach((card) => {
+        const tags = card.dataset.tags!.split('|');
+        card.hidden = f !== 'all' && !tags.includes(f);
+      });
+    }),
+  );
+</script>
+
+<style>
+  .hero { padding: 120px 0 96px; max-width: 760px; }
+  h1 {
+    margin: 18px 0 24px;
+    font-size: clamp(36px, 6vw, 56px);
+    line-height: 1.08;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+  }
+  h1 span { color: var(--muted); }
+  .intro { font-size: 18px; color: var(--muted); max-width: 620px; margin: 0 0 32px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+  .work { scroll-margin-top: 80px; }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font: 400 13px/1 var(--mono);
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  .chip:hover { color: var(--text); }
+  .chip.active { color: var(--bg); background: var(--text); border-color: var(--text); }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .grid :global(.card[hidden]) { display: none; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } .hero { padding: 72px 0 64px; } }
+
+  .about { margin-top: 120px; scroll-margin-top: 80px; }
+  .about-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; margin-top: 20px; }
+  @media (max-width: 720px) { .about-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .about p { color: var(--muted); margin: 0 0 14px; }
+  .about .eyebrow { margin-bottom: 14px; }
+  .skills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .link { color: var(--accent); text-decoration: none; }
+  .link:hover { text-decoration: underline; }
+</style>

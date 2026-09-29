@@ -1,0 +1,84 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+const { project, next } = Astro.props;
+const { title, summary, tags, year, link, cover, private: isPrivate } = project.data;
+const { Content } = await render(project);
+---
+
+<Base title={title} description={summary}>
+  <article>
+    <a class="back" href="/#work">← All work</a>
+    <header>
+      <p class="eyebrow">{year}{isPrivate && ' · Private internal tool'}</p>
+      <h1>{title}</h1>
+      <p class="summary">{summary}</p>
+      <div class="row">
+        <div class="tags">{tags.map((t) => <span class="tag">{t}</span>)}</div>
+        {link && <a class="btn primary" href={link} target="_blank" rel="noopener">Visit live site ↗</a>}
+      </div>
+    </header>
+
+    {cover && (
+      <div class="cover">
+        <Image src={cover} alt={`Screenshot of ${title}`} widths={[800, 1440]} sizes="(max-width: 1080px) 100vw, 1032px" />
+      </div>
+    )}
+
+    <div class="prose"><Content /></div>
+
+    <a class="next" href={`/projects/${next.id}/`}>
+      <span class="eyebrow">Next project</span>
+      <span class="next-title">{next.data.title} →</span>
+    </a>
+  </article>
+</Base>
+
+<style>
+  article { padding-top: 48px; }
+  .back { color: var(--muted); text-decoration: none; font-size: 14px; }
+  .back:hover { color: var(--text); }
+  header { margin: 40px 0 40px; max-width: 760px; }
+  h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 600; margin: 14px 0 16px; }
+  .summary { font-size: 18px; color: var(--muted); margin: 0 0 28px; }
+  .row { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cover { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 56px; }
+  .cover img { width: 100%; height: auto; }
+
+  .prose { max-width: 700px; }
+  .prose :global(h2) { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; margin: 44px 0 12px; }
+  .prose :global(h2:first-child) { margin-top: 0; }
+  .prose :global(p), .prose :global(li) { color: #c4c4cc; }
+  .prose :global(ul) { padding-left: 20px; }
+  .prose :global(li) { margin-bottom: 8px; }
+  .prose :global(li::marker) { color: var(--faint); }
+  .prose :global(strong) { color: var(--text); font-weight: 600; }
+  .prose :global(a) { color: var(--accent); text-decoration: none; }
+  .prose :global(a:hover) { text-decoration: underline; }
+
+  .next {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 80px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .next:hover { border-color: #3a3a44; }
+  .next-title { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+</style>
