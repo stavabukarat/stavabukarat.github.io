@@ -14,6 +14,7 @@ const projects = defineCollection({
       order: z.number(),             // lower comes first on the home page
       link: z.string().url().optional(),
       cover: image().optional(),
+      gallery: z.array(z.object({ src: image(), caption: z.string() })).default([]),
       private: z.boolean().default(false),
     }),
 });

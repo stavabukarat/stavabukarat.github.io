@@ -6,6 +6,10 @@ tags: [Base44, Wix Events, Webhooks, Automations, Dashboard]
 year: 2026
 order: 4
 private: true
+cover: ../../assets/projects/summit-manager.png
+gallery:
+  - src: ../../assets/projects/summit-checkin.png
+    caption: Check-in screen used at the entrance on the day of the summit. Guest names and emails are blurred.
 ---
 
 ## The problem
@@ -22,7 +26,7 @@ A management system in Base44 connected to the summit's Wix Studio website:
 - **Reminder automations** sent to approved attendees before the event.
 - **Check-in** at the entrance on the day of the summit.
 
-This is a private internal tool, so there's no public link.
+This is a private internal tool, so there's no public link. The screenshots show the approval dashboard (top) and the check-in screen (below), with guest names and emails blurred.
 
 ## Stack
 

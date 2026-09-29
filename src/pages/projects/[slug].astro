@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 }
 
 const { project, next } = Astro.props;
-const { title, summary, tags, year, link, cover, private: isPrivate } = project.data;
+const { title, summary, tags, year, link, cover, gallery, private: isPrivate } = project.data;
 const { Content } = await render(project);
 ---
 
@@ -36,6 +36,18 @@ const { Content } = await render(project);
     )}
 
     <div class="prose"><Content /></div>
+
+    {gallery.length > 0 && (
+      <section class="gallery">
+        <h2>Screenshots</h2>
+        {gallery.map((shot) => (
+          <figure>
+            <Image src={shot.src} alt={shot.caption} widths={[800, 1440]} sizes="(max-width: 1080px) 100vw, 1032px" />
+            <figcaption>{shot.caption}</figcaption>
+          </figure>
+        ))}
+      </section>
+    )}
 
     <a class="next" href={`/projects/${next.id}/`}>
       <span class="eyebrow">Next project</span>
@@ -66,6 +78,12 @@ const { Content } = await render(project);
   .prose :global(strong) { color: var(--text); font-weight: 600; }
   .prose :global(a) { color: var(--accent); text-decoration: none; }
   .prose :global(a:hover) { text-decoration: underline; }
+
+  .gallery { margin-top: 56px; }
+  .gallery h2 { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 20px; }
+  figure { margin: 0 0 32px; }
+  figure img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+  figcaption { margin-top: 10px; color: var(--muted); font-size: 14px; }
 
   .next {
     display: flex;
