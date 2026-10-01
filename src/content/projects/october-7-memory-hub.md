@@ -5,7 +5,7 @@ platform: Base44
 tags: [Base44, Dashboard, Forms]
 year: 2026
 order: 3
-link: https://october-memory-hub.base44.app
+link: https://october-memory-hub.com
 cover: ../../assets/projects/memory-hub.png
 ---
 
